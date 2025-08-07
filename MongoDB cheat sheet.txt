@@ -1,0 +1,114 @@
+--with this script You are now a certified mongodb expert --
+
+a script to insert many products:
+
+
+-- creating a database --
+
+use shopDB;
+
+
+-- inserting many documents to a collection --
+
+db.products.insertMany([
+  {
+    name: "Laptop",
+    category: "Electronics",
+    price: 899.99,
+    stock: 15,
+    tags: ["sale", "new"],
+    specs: { cpu: "i7", ram: 16 }
+  },
+  {
+    name: "Desk Chair",
+    category: "Furniture",
+    price: 149.99,
+    stock: 8,
+    tags: ["office"],
+    specs: { material: "Leather" }
+  }]);
+
+
+-- Searching for multiple products in a collection --
+
+db.products.find({ category: { $regex: /electronics/i } });  -- will find products like electronics
+
+db.products.find({ category: "Electronics" }); -- strict search
+
+
+-- finding items with conditional operators--
+
+-- $gt: stands for greater
+-- $gte: stands for greater than or equal to
+-- $lt: stands for less than
+-- $lte: stands for less than or equal to
+-- $inc: increment the value of a field
+
+-- $mul: multiplies a fields current value with the value placed
+
+db.products.find({
+  stock: { $gte: 50, $lte: 200 }
+}) -- select values greater than 50 and less than 200
+
+db.products.find({
+  price: { $gt: 50 },
+  stock: { $gt: 0 }
+});
+
+
+-- Select rows from a collection --
+
+db.products.find({}, { name: 1, price: 1, _id: 0 });
+db.products.find({}, { name: 1, price: 1, _id: 0 });
+
+
+-- update one products --
+
+db.products.updateOne(
+  { name: "Coffee Mug" },
+  { $set: { stock: 15 } }
+);
+
+
+-- update many products --
+
+db.products.updateMany(
+  { category: "Books" },
+  { $inc: { stock: 10 } }
+);
+
+
+-- Apply 10% discount to Electronics
+db.products.updateMany(
+  { category: "Electronics" },
+  { $mul: { price: 0.9 } }
+);
+
+
+-- deleting items --
+db.products.deleteMany({ stock: 0 }); -- deletes many
+db.products.deleteOne({ tags: "accessory" }); -- deletes one accessory item
+
+
+-- average price per category --
+db.products.aggregate([
+  { $group: { _id: "$category", avgPrice: { $avg: "$price" } } }
+]);
+
+
+-- Sort by Price --
+
+db.products.find().sort({ price: -1 }); -- decending
+
+db.products.find().sort({ price: 1 }); -- ascending
+
+db.products.find({ category: "Electronics" }).sort({ price: -1 });
+
+
+
+-- Pagination --
+db.products.find().skip(2).limit(3);
+
+
+
+
