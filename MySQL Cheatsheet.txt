@@ -1,0 +1,91 @@
+MySQL Cheatsheet
+
+-- Create the database
+CREATE DATABASE shopDB;
+
+-- Select the database to use
+USE shopDB;
+
+-- Create the products table with a defined structure (schema)
+CREATE TABLE products (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  category VARCHAR(100),
+  price DECIMAL(10, 2) NOT NULL,
+  stock INT DEFAULT 0,
+  tags JSON,  -- MySQL has a JSON data type
+  specs JSON
+);
+
+
+-- Inserting many rows into the 'products' table
+INSERT INTO products (name, category, price, stock, tags, specs) VALUES
+(
+  'Laptop',
+  'Electronics',
+  899.99,
+  15,
+  '["sale", "new"]',
+  '{"cpu": "i7", "ram": 16}'
+),
+(
+  'Desk Chair',
+  'Furniture',
+  149.99,
+  8,
+  '["office"]',
+  '{"material": "Leather"}'
+);
+
+
+-- Find products using a pattern (like MongoDB's $regex)
+SELECT * FROM products WHERE category LIKE '%electronics%';
+
+-- Strict search (case-insensitive depends on DB collation)
+SELECT * FROM products WHERE category = 'Electronics';
+
+
+-- Select only the name and price for all products
+SELECT name, price FROM products;
+
+
+-- Update one product (using LIMIT 1 is a MySQL-specific safety feature)
+UPDATE products
+SET stock = 15
+WHERE name = 'Coffee Mug'
+LIMIT 1;
+
+-- Update many products (increment stock for all books)
+UPDATE products
+SET stock = stock + 10
+WHERE category = 'Books';
+
+-- Apply a 10% discount to all Electronics (multiplication)
+UPDATE products
+SET price = price * 0.90
+WHERE category = 'Electronics';
+
+-- Delete many items
+DELETE FROM products WHERE stock = 0;
+
+-- Delete one item that has the "accessory" tag
+-- Note: Searching inside JSON is more complex in SQL
+DELETE FROM products WHERE JSON_CONTAINS(tags, '"accessory"') LIMIT 1;
+
+
+-- Get the average price for each category
+SELECT category, AVG(price) AS average_price
+FROM products
+GROUP BY category;
+
+-- Sort by price, highest first (descending)
+SELECT * FROM products ORDER BY price DESC;
+
+-- Sort by price, lowest first (ascending)
+SELECT * FROM products ORDER BY price ASC;
+
+-- Find Electronics and sort by price
+SELECT * FROM products WHERE category = 'Electronics' ORDER BY price DESC;
+
+-- Pagination: Skip the first 2 products and show the next 3
+SELECT * FROM products ORDER BY id LIMIT 3 OFFSET 2;

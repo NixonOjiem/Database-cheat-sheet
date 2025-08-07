@@ -1,0 +1,96 @@
+PostgreSQL Cheatsheet
+
+-- Create the database
+CREATE DATABASE shopdb;
+
+-- Connect to the database (in psql client: \c shopdb)
+
+-- Create the products table
+CREATE TABLE products (
+  id SERIAL PRIMARY KEY, -- SERIAL is an auto-incrementing integer
+  name VARCHAR(255) NOT NULL,
+  category VARCHAR(100),
+  price DECIMAL(10, 2) NOT NULL,
+  stock INT DEFAULT 0,
+  tags JSONB,  -- JSONB is the preferred, indexed binary format
+  specs JSONB
+);
+
+-- Inserting many rows into the 'products' table
+INSERT INTO products (name, category, price, stock, tags, specs) VALUES
+(
+  'Laptop',
+  'Electronics',
+  899.99,
+  15,
+  '["sale", "new"]',
+  '{"cpu": "i7", "ram": 16}'
+),
+(
+  'Desk Chair',
+  'Furniture',
+  149.99,
+  8,
+  '["office"]',
+  '{"material": "Leather"}'
+);
+
+-- Find products using a case-insensitive regex search
+SELECT * FROM products WHERE category ~* 'electronics';
+
+-- Strict search (case-sensitive by default)
+SELECT * FROM products WHERE category = 'Electronics';
+
+-- For case-insensitive strict search
+SELECT * FROM products WHERE ILIKE 'Electronics';
+
+
+-- Select items where stock is between 50 and 200
+SELECT * FROM products WHERE stock BETWEEN 50 AND 200;
+
+-- Find in-stock items costing more than 50
+SELECT * FROM products WHERE price > 50 AND stock > 0;
+
+-- Select only the name and price for all products
+SELECT name, price FROM products;
+
+
+-- Update one product (the PostgreSQL way)
+UPDATE products
+SET stock = 15
+WHERE id = (SELECT id FROM products WHERE name = 'Coffee Mug' LIMIT 1);
+
+-- Update many products (increment stock for all books)
+UPDATE products
+SET stock = stock + 10
+WHERE category = 'Books';
+
+-- Apply a 10% discount to all Electronics (multiplication)
+UPDATE products
+SET price = price * 0.90
+WHERE category = 'Electronics';
+
+-- Delete many items
+DELETE FROM products WHERE stock = 0;
+
+-- Delete one item that has the "accessory" tag using JSONB's "contains" operator
+DELETE FROM products
+WHERE id = (SELECT id FROM products WHERE tags @> '"accessory"'::jsonb LIMIT 1);
+
+
+-- Get the average price for each category
+SELECT category, AVG(price) AS average_price
+FROM products
+GROUP BY category;
+
+
+-- Sort by price, highest first (descending)
+SELECT * FROM products ORDER BY price DESC;
+
+-- Pagination: Skip the first 2 products and show the next 3
+SELECT * FROM products ORDER BY id LIMIT 3 OFFSET 2;
+
+
+
+
+
