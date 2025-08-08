@@ -32,6 +32,7 @@ db.products.insertMany([
 -- Searching for multiple products in a collection --
 
 db.products.find({ category: { $regex: /electronics/i } });  -- will find products like electronics
+db.students.find({ name: /Nixon/i })
 
 db.products.find({ category: "Electronics" }); -- strict search
 
@@ -60,6 +61,19 @@ db.products.find({
 
 db.products.find({}, { name: 1, price: 1, _id: 0 });
 db.products.find({}, { name: 1, price: 1, _id: 0 });
+
+-- returns students from Nairobi and kisumu---
+
+db.students.find(
+  { location: { $all: ["Nairobi", "Kisumu"] } },
+  { _id: 0, name: 1, location: 1 }
+)
+
+db.students.find({
+  location: { 
+    $all: [/^nairobi$/i, /^kisumu$/i] 
+  }
+})
 
 
 -- update one products --
