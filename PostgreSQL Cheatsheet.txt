@@ -1,5 +1,13 @@
 PostgreSQL Cheatsheet
 
+Command	Description	Example
+\l	Lists all databases. \l
+\c	Connects to a different database. \c mydatabase
+\dt	Lists all tables in the current database. \dt
+\d	Describes a table, showing its columns, types, and indexes. \d users
+\q	Quits the psql client. \q
+\?	Shows a help menu for all meta-commands. \?
+
 -- Create the database
 CREATE DATABASE shopdb;
 
