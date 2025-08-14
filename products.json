@@ -22,4 +22,7 @@
 db.products.insertOne({name:"Mechanical Keyboard", category:"Electronics", price:120, quantity:25, tags:["computer", "rgb", "mechanical"],});
 db.products.find({category: "Electronniics"},{stock: {$gte:0}, price:{$lt:100}}));
 db.products.updateOne({productsName:"Wireless Mouse"},{$set: {reviews.comment:"Absolutely fantastic!"}});
-db.products.deleteOne({productName:"Old CRT Monitor"});
+db.products.deleteOne({productName:"Old CRT Monitor"});\
+db.products.aggregate({$group:{_id:"$category", avergaegPrice:{$avg:"$price"}, productCount:{$sum:1}}});
+db.products.aggregate({$group:{_id:"$productName",avarageRating:{$avg:"$reviews.rating"}}}).sort({avarageRating:-1}).limit(5);
+db.products.createIndex({ category: 1, stock: 1, price: 1 });
