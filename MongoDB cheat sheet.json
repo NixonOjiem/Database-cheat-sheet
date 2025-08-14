@@ -1,6 +1,5 @@
---with this script You are now a certified mongodb expert --
 
-a script to insert many products:
+
 
 
 -- creating a database --
@@ -82,7 +81,17 @@ db.products.updateOne(
   { name: "Coffee Mug" },
   { $set: { stock: 15 } }
 );
-
+db.products.updateOne(
+  { productName: "Wireless Mouse" }, // Filter to find the document
+  {
+    $push: { // Use $push to add to an array
+      reviews: {
+        rating: 5,
+        comment: "Absolutely fantastic!"
+      }
+    }
+  }
+);
 
 -- update many products --
 
