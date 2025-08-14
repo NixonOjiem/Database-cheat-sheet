@@ -1,0 +1,59 @@
+Scenario: E-commerce Product Catalog
+You are tasked with building the backend for a new e-commerce platform. Your primary responsibility is to manage the product catalog using MongoDB.
+Part 1: Data Modeling
+A product in your catalog needs to store the following information:
+Product name (e.g., "Wireless Mouse")
+Category (e.g., "Electronics")
+Price (in USD)
+Stock quantity
+A list of tags (e.g., ["computer", "peripheral", "bluetooth"])
+A list of customer reviews, where each review has a rating (1-5) and a comment (text).
+Task:
+Design the JSON document structure for a single product to be stored in a products collection.
+Tip for the interviewer: Look for the candidate's use of appropriate data types (String, Number, Array) and their decision to embed the reviews array directly within the product document, which is a common and efficient pattern for one-to-many relationships in MongoDB.
+Part 2: CRUD Operations
+Assume your products collection is now populated with data. Write the MongoDB queries for the following tasks.
+1. Create:
+Insert a new product into the collection:
+Name: "Mechanical Keyboard"
+Category: "Electronics"
+Price: 120
+Stock: 25
+Tags: ["gaming", "mechanical", "rgb"]
+2. Read:
+Find all products in the "Electronics" category that are in stock (stock > 0) and cost less than $100.
+3. Update:
+A customer has just left a 5-star review with the comment "Absolutely fantastic!" for the "Wireless Mouse". Write a query to add this new review to the product's reviews array. You should not overwrite existing reviews.
+4. Delete:
+A product named "Old CRT Monitor" has been discontinued. Write a query to remove this product from the collection.
+Part 3: Aggregation Pipeline
+These tasks require you to process and analyze data across the collection.
+Task 1: Category Pricing Report
+Write an aggregation pipeline to calculate the average price and the total number of products available in each category.
+The output should look something like this:
+JSON
+[
+  { "_id": "Electronics", "averagePrice": 150.75, "productCount": 45 },
+  { "_id": "Books", "averagePrice": 25.50, "productCount": 120 }
+]
+Task 2: Top Rated Products
+Write an aggregation pipeline to find the top 5 products with the highest average review rating. Your result should only include the product name and its calculated average rating.
+The output should look something like this:
+JSON
+[
+  { "productName": "Wireless Mouse", "averageRating": 4.9 },
+  { "productName": "Ergonomic Chair", "averageRating": 4.85 }
+]
+Part 4: Indexing for Performance
+Performance is critical for user experience.
+Task:
+Consider the Read query from Part 2: Find all products in the "Electronics" category that are in stock (stock > 0) and cost less than $100.
+Write the createIndex() command to create an optimal index for this query.
+Briefly explain why your chosen index is effective for this specific query.
+Tip for the interviewer: A good answer would be a compound index, ideally following the ESR (Equality, Sort, Range) rule. For example, db.products.createIndex({ category: 1, price: 1 }). The explanation should mention how the index helps MongoDB quickly filter by category first and then efficiently handle the range scan on the price, avoiding a full collection scan.
+Bonus Part 5: Transactions
+A customer places an order for a "Mechanical Keyboard". This action requires two separate operations that must succeed or fail together to ensure data integrity:
+Decrement the stock of the "Mechanical Keyboard" by 1 in the products collection.
+Insert a new document into an orders collection with the product details and customer ID.
+Task:
+Describe the high-level steps and the key MongoDB concepts/commands you would use to perform these two operations as a single, atomic transaction. You don't need to write the full code, but you should name the relevant session and transaction commands (e.g., startSession, startTransaction, commitTransaction).
